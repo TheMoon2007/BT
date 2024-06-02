@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch Application</title>
+    <style>
+        .stopwatch {
+            margin-bottom: 20px;
+        }
+        .buttons {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="stopwatchContainer"></div>
+<button id="startAll">Start All</button>
+<button id="stopAll">Stop All</button>
+
+<script>
+class Stopwatch {
+    constructor(container) {
+        this.running = false;
+        this.timeElapsed = 0;
+        this.interval = null;
+
+        this.createElements(container);
+    }
+
+    createElements(container) {
+        this.container = document.createElement('div');
+        this.container.className = 'stopwatch';
+
+        this.timeLabel = document.createElement('span');
+        this.timeLabel.textContent = '00:00';
+        this.container.appendChild(this.timeLabel);
+
+        this.startButton = document.createElement('button');
+        this.startButton.textContent = 'Start';
+        this.startButton.onclick = () => this.start();
+        this.container.appendChild(this.startButton);
+
+        this.stopButton = document.createElement('button');
+        this.stopButton.textContent = 'Stop';
+        this.stopButton.onclick = () => this.stop();
+        this.container.appendChild(this.stopButton);
+
+        container.appendChild(this.container);
+    }
+
+    updateTime() {
+        this.interval = setInterval(() => {
+            if (this.running) {
+                this.timeElapsed += 1;
+                const minutes = Math.floor(this.timeElapsed / 60);
+                const seconds = this.timeElapsed % 60;
+                this.timeLabel.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+        }, 1000);
+    }
+
+    start() {
+        if (!this.running) {
+            this.running = true;
+            this.updateTime();
+        }
+    }
+
+    stop() {
+        this.running = false;
+        this.timeElapsed = 0;
+        this.timeLabel.textContent = '00:00';
+        clearInterval(this.interval);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('stopwatchContainer');
+    const stopwatches = [new Stopwatch(container), new Stopwatch(container), new Stopwatch(container), new Stopwatch(container), new Stopwatch(container)];
+
+    document.getElementById('startAll').onclick = () => stopwatches.forEach(sw => sw.start());
+    document.getElementById('stopAll').onclick = () => stopwatches.forEach(sw => sw.stop());
+});
+</script>
+
+</body>
+</html>
